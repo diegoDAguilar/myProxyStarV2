@@ -75,8 +75,9 @@ func parseJsonPOST(w http.ResponseWriter, r *http.Request) {
                 storeForRenewal(t.Validity)
                 go post_cert()
                 cronTaskID++ //Counter that serves together with the uuid to make each petition unique
-		
-            	rmTmpFiles() //Removes tmp files, comment this function if you want more information
+
+                //Removes tmp files, comment this function if you want more information
+                rmTmpFiles()
 
         }
 
@@ -105,8 +106,9 @@ func post_cert () {
     if openPort != true {
         openPort = true
         err := http.ListenAndServe(":9500", nil)
-        if err != nil {
-        panic(err)
+       // err := http.ListenAndServe("9500", "server.crt", "server.key", nil) //Uncomment this and comment the previous one
+        if err != nil {                                                       //to make  retrieving the cert https.
+        panic(err)                                                            //It has been tested and it works! 
         }
     }
 
@@ -130,8 +132,9 @@ func post_completionURL() {
         router := mux.NewRouter().StrictSlash(true)
         router.HandleFunc("/completionURL", answerAGet).Methods("GET")
         err := http.ListenAndServe(":9999", router)
-        if err != nil{
-                panic(err)
+        //err := http.ListenAndServeTLS(":9999","server.crt", "server.key", router) //Uncomment this and comment the previous one
+        if err != nil{                                                              //to make getting the URI https.
+                panic(err)                                                          //It hasn't been tested YET
 
         }
 
@@ -296,15 +299,15 @@ func rmTmpFiles () {
     if err != nil {
         panic (err)
     }
-    err = os.Remove("ObtainedCERT.pem")
+    err := os.Remove("ObtainedCERT.pem")
     if err != nil {
         panic (err)
     }
-    err = os.Remove("STARValidityCertbot")
+    err := os.Remove("STARValidityCertbot")
     if err != nil {
         panic(err)
     }
-    err = os.Remove("tmpCsr")
+    err := os.Remove("tmpCsr")
     if err != nil {
         panic(err)
     }
@@ -322,4 +325,3 @@ func main() {
     }
 
 }
-
